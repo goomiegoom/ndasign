@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentora NDA — กรอกข้อมูลสัญญา</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243257;
+    --gold: #b8922a;
+    --gold-light: #d4a93c;
+    --cream: #faf8f3;
+    --paper: #fffef9;
+    --border: #d9d0be;
+    --text: #1a1a1a;
+    --muted: #6b6254;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: var(--navy-mid); }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+  .sidebar-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid rgba(184,146,42,0.3);
+  }
+
+  .sidebar-logo {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .form-body {
+    padding: 24px 28px;
+    flex: 1;
+  }
+
+  .form-section { margin-bottom: 28px; }
+
+  .form-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(184,146,42,0.2);
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    color: #fff;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+  }
+
+  .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.2); }
+
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.09);
+  }
+
+  .field textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+  .field select { cursor: pointer; }
+  .field select option { background: var(--navy); color: #fff; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; font-style: italic; }
+
+  .logo-preview-sidebar {
+    margin-top: 8px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-preview-sidebar img {
+    max-height: 48px;
+    max-width: 200px;
+    object-fit: contain;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    padding: 4px;
+  }
+
+  .logo-status { font-size: 11px; color: rgba(255,255,255,0.3); font-style: italic; }
+  .logo-error  { font-size: 11px; color: #e87; font-style: italic; }
+
+  .print-btn {
+    margin: 0 28px 28px;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 8px;
+    padding: 13px 24px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    width: calc(100% - 56px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .print-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .print-btn:active { transform: translateY(0); }
+  .print-btn svg { width: 18px; height: 18px; }
+
+  /* PREVIEW */
+  .preview-panel { background: #e8e5de; padding: 40px; overflow-y: auto; }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .preview-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .page-count {
+    font-size: 12px;
+    color: var(--muted);
+    background: rgba(0,0,0,0.08);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* NDA DOC */
+  .nda-doc {
+    background: var(--paper);
+    border-radius: 3px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .doc-body {
+    padding: 60px 72px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14.5px;
+    line-height: 2;
+    color: #111;
+  }
+
+  .doc-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .doc-logo-area {
+    margin-bottom: 16px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .doc-logo-area img { max-height: 56px; max-width: 220px; object-fit: contain; }
+  .doc-logo-text { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+
+  .doc-title {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .doc-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+  .doc-made-at  { font-size: 14px; color: var(--text); }
+  .doc-date-line { font-size: 14px; margin-top: 6px; }
+
+  .doc-section { margin-bottom: 20px; }
+
+  .doc-section-title {
+    font-family: 'Noto Serif Thai', serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .doc-p { text-indent: 2em; margin-bottom: 10px; text-align: justify; }
+  .doc-p.no-indent { text-indent: 0; }
+
+  .fill-blank {
+    display: inline-block;
+    border-bottom: 1px solid #333;
+    min-width: 180px;
+    padding: 0 4px;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: center;
+  }
+
+  .fill-blank.empty { color: #bbb; font-weight: 400; font-style: italic; }
+  .fill-blank.short { min-width: 100px; }
+  .fill-blank.long  { min-width: 300px; }
+
+  .parties-block {
+    background: #f5f3ec;
+    border-left: 3px solid var(--navy);
+    padding: 18px 24px;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0 24px;
+    font-size: 14px;
+    line-height: 2.1;
+  }
+
+  .parties-block .party-name { font-weight: 700; color: var(--navy); font-size: 15px; }
+  .party-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-top: 14px; margin-bottom: 4px; }
+  .info-row { color: var(--text); }
+  .info-label { color: var(--muted); font-size: 13px; margin-right: 4px; }
+
+  .section-divider { height: 1px; background: linear-gradient(to right, var(--border), transparent); margin: 28px 0; }
+
+  /* ATTACHMENT */
+  .attachment-block {
+    margin-top: 36px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .attachment-title {
+    background: #f0ece3;
+    padding: 10px 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Noto Serif Thai', serif;
+  }
+
+  .attachment-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; }
+
+  .attachment-item { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+
+  .checkbox-box {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #555;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* SIGS */
+  .sig-block { margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .sig-box { text-align: center; }
+  .sig-line { border-bottom: 1px solid #333; margin-bottom: 6px; height: 40px; }
+  .sig-name-line { border-bottom: 1px solid #333; height: 24px; margin-bottom: 4px; }
+  .sig-label { font-size: 12px; color: var(--muted); }
+  .witness-block { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; }
+
+  /* PRINT */
+  @media print {
+    .sidebar, .preview-header { display: none !important; }
+    .app { display: block; }
+    .preview-panel { padding: 0; background: white; }
+    .nda-doc { box-shadow: none; border-radius: 0; max-width: 100%; }
+    .doc-body { padding: 20mm 25mm; font-size: 14px; }
+    body { background: white; }
+  }
+
+  @page { margin: 15mm; size: A4; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">Mentora Consulting Group</div>
+      <div class="sidebar-subtitle">NDA · กรอกข้อมูลสัญญา</div>
+    </div>
+
+    <div class="form-body">
+
+      <div class="form-section">
+        <div class="form-section-label">โลโก้บริษัท</div>
+        <div class="field">
+          <label>Google Drive link ของโลโก้</label>
+          <input type="text" id="logoUrl" placeholder="https://drive.google.com/file/d/.../view">
+          <div class="hint">share "Anyone with link" แล้ววาง link ได้เลย — แปลงให้อัตโนมัติ</div>
+        </div>
+        <div class="logo-preview-sidebar" id="logoSidebarWrap">
+          <span class="logo-status">ยังไม่มีโลโก้</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-label">ข้อมูลสัญญา</div>
+        <div class="field">
+          <label>วันที่ทำสัญญา</label>
+          <input type="date" id="contractDate">
+        </div>
+        <div class="field">
+          <label>ชื่อคอร์ส / โปรเจค</label>
+          <input type="text" id="projectName" placeholder="เช่น AI Transformation Workshop">
+        </div>
+        <div class="field">
+          <label>ชื่อกรรมการผู้มีอำนาจลงนาม (ฝั่งบริษัท)</label>
+          <input type="text" id="companyRep" placeholder="ชื่อ-นามสกุล กรรมการ">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-label">ข้อมูลผู้สอน</div>
+        <div class="field">
+          <label>ชื่อ-นามสกุล ผู้สอน</label>
+          <input type="text" id="teacherName" placeholder="ชื่อ-นามสกุล">
+        </div>
+        <div class="field">
+          <label>ที่อยู่</label>
+          <textarea id="address" placeholder="เลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด รหัสไปรษณีย์"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>เลขบัตรประชาชน</label>
+            <input type="text" id="idCard" placeholder="X-XXXX-XXXXX-XX-X" maxlength="17">
+          </div>
+          <div class="field">
+            <label>โทรศัพท์</label>
+            <input type="text" id="phone" placeholder="0XX-XXX-XXXX">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-label">เงื่อนไขสัญญา</div>
+        <div class="field">
+          <label>ระยะเวลารักษาความลับ (หลังสิ้นสุดงาน)</label>
+          <select id="secretYears">
+            <option value="">— เลือก —</option>
+            <option value="1">1 ปี</option>
+            <option value="2">2 ปี</option>
+            <option value="3">3 ปี</option>
+            <option value="5">5 ปี</option>
+            <option value="ไม่มีกำหนด">ไม่มีกำหนด</option>
+          </select>
+          <div class="hint">ข้อ 14</div>
+        </div>
+        <div class="field">
+          <label>ค่าปรับต่อการฝ่าฝืนแต่ละครั้ง (บาท)</label>
+          <input type="text" id="penalty" placeholder="เช่น 50,000">
+          <div class="hint">ข้อ 15</div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="print-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      พิมพ์ / บันทึก PDF
+    </button>
+  </aside>
+
+  <main class="preview-panel">
+    <div class="preview-header">
+      <span class="preview-label">ตัวอย่างสัญญา (Live Preview)</span>
+      <span class="page-count">9 หน้า · A4</span>
+    </div>
+
+    <div class="nda-doc">
+      <div class="doc-body">
+
+        <div class="doc-header">
+          <div class="doc-logo-area" id="docLogoArea">
+            <span class="doc-logo-text">Mentora Consulting Group Co., Ltd.</span>
+          </div>
+          <div class="doc-title">สัญญารักษาความลับและไม่เปิดเผยข้อมูล</div>
+          <div class="doc-subtitle">Non-Disclosure Agreement (NDA)</div>
+          <div class="doc-made-at">ทำขึ้นที่ บริษัทเมนทอรา คอนซัลติง กรุ๊ป จำกัด</div>
+          <div class="doc-date-line">วันที่ <span class="fill-blank" id="preview-date">……………………………</span></div>
+        </div>
+
+        <div class="doc-section">
+          <p class="doc-p">สัญญาฉบับนี้ทำขึ้นระหว่าง <strong>บริษัทเมนทอรา คอนซัลติง กรุ๊ป จำกัด</strong> โดย
+            <span class="fill-blank short" id="preview-company-rep">……………………</span>
+            กรรมการผู้มีอำนาจลงนามผูกพันนิติบุคคล ทะเบียนนิติบุคคลเลขที่ 0125568033993
+            สำนักงานใหญ่ตั้งอยู่ที่ 3 หมู่ที่ 9 ซอย 9 แยก 15 ถนนงามวงศ์วาน ตำบลบางกระสอ อำเภอเมืองนนทบุรี จังหวัดนนทบุรี
+            ซึ่งต่อไปในสัญญานี้เรียกว่า <strong>"บริษัท"</strong> หรือ <strong>"ผู้เปิดเผยข้อมูล"</strong> ฝ่ายหนึ่ง</p>
+
+          <div class="parties-block">
+            <div class="party-label">ผู้รับข้อมูล / ผู้สอน</div>
+            <div class="party-name" id="preview-teacher">……………………………………………………</div>
+            <div class="info-row"><span class="info-label">ที่อยู่:</span><span id="preview-address">……………………………………………………………………………………</span></div>
+            <div class="info-row"><span class="info-label">เลขบัตรประชาชน:</span><span id="preview-id">……………………………</span>&nbsp;&nbsp;&nbsp;<span class="info-label">โทรศัพท์:</span><span id="preview-phone">……………………………</span></div>
+          </div>
+
+          <p class="doc-p">คู่สัญญาทั้งสองฝ่ายตกลงทำสัญญารักษาความลับและไม่เปิดเผยข้อมูล โดยมีข้อความดังต่อไปนี้</p>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 1. วัตถุประสงค์ของสัญญา</div>
+          <p class="doc-p">บริษัทประกอบธุรกิจให้คำปรึกษา วางระบบ อบรม และดำเนินโครงการเกี่ยวกับการนำเทคโนโลยีปัญญาประดิษฐ์ หรือ AI ไปใช้ในองค์กร รวมถึง AI Implementation, AI Transformation, Automation, Workflow Design, Data Utilization, Prompt Engineering, AI Policy, AI Governance และงานอื่นที่เกี่ยวข้อง</p>
+          <p class="doc-p">บริษัทมีความประสงค์จะว่าจ้าง หรือมอบหมายให้ผู้สอนเป็นผู้บรรยาย สอน ฝึกอบรม ให้คำปรึกษา หรือสนับสนุนการจัดอบรมในหลักสูตร <strong><span id="preview-project-inline">……………………………</span></strong> ให้แก่ลูกค้าของบริษัท</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 2. คำนิยามของข้อมูลความลับ</div>
+          <p class="doc-p">ภายใต้สัญญานี้ คำว่า "ข้อมูลความลับ" หมายความถึง ข้อมูล เอกสาร เนื้อหา ความรู้ วิธีการทำงาน เทคนิค รูปแบบธุรกิจ ข้อมูลเชิงพาณิชย์ ข้อมูลทางเทคนิค ข้อมูลเชิงกลยุทธ์ ข้อมูลลูกค้า ข้อมูลพนักงาน ข้อมูลภายในองค์กร ข้อมูลโครงการ ข้อมูลระบบ รวมถึง AI Model, Prompt, Workflow, Automation, Dataset, Use Case, Process Design, Implementation Plan, Training Material, Consulting Methodology, Business Case, Pain Point ตลอดจนข้อมูลอื่นใดที่บริษัทหรือลูกค้าของบริษัทเปิดเผยให้แก่ผู้สอน ไม่ว่าจะเปิดเผยโดยวิธีการใดก็ตาม</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 3. หน้าที่ในการรักษาความลับ</div>
+          <p class="doc-p">ผู้สอนตกลงและรับรองว่าจะรักษาข้อมูลความลับทั้งหมดที่ได้รับจากบริษัทหรือลูกค้าของบริษัทไว้เป็นความลับอย่างเคร่งครัด และจะไม่เปิดเผย ส่งต่อ เผยแพร่ แจกจ่าย ถ่ายทอด ทำซ้ำ คัดลอก อัปโหลด โพสต์ นำเสนอ อ้างอิง หรือทำให้บุคคลภายนอกได้รับทราบข้อมูลความลับ เว้นแต่จะได้รับความยินยอมเป็นลายลักษณ์อักษรจากบริษัทก่อนทุกครั้ง</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 4. การจำกัดวัตถุประสงค์ในการใช้ข้อมูล</div>
+          <p class="doc-p">ผู้สอนตกลงว่าจะใช้ข้อมูลความลับเฉพาะเท่าที่จำเป็นเพื่อการสอน การบรรยาย การเตรียมเนื้อหา การให้คำปรึกษา หรือการปฏิบัติงานตามที่บริษัทมอบหมายเท่านั้น และไม่มีสิทธินำข้อมูลความลับไปใช้เพื่อประโยชน์ส่วนตนหรือบุคคลอื่น เว้นแต่ได้รับอนุญาตเป็นลายลักษณ์อักษรจากบริษัทก่อน</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 5. การห้ามเผยแพร่เคสจริงของบริษัทและลูกค้า</div>
+          <p class="doc-p">ผู้สอนห้ามนำเคสจริง ตัวอย่างปัญหา กระบวนการทำงาน เอกสาร ภาพหน้าจอ Workflow, Automation Flow, Prompt, Output, Dashboard, Dataset หรือผลลัพธ์ใดๆ จากโครงการของบริษัทหรือลูกค้าไปเผยแพร่ต่อสาธารณะในรูปแบบใด ไม่ว่าจะเป็น Facebook, TikTok, YouTube, Instagram, LinkedIn หรือสื่อออนไลน์ใดๆ แม้จะปกปิดชื่อบริษัทแล้วก็ตาม</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 6. การทำข้อมูลให้ไม่สามารถระบุตัวตนได้</div>
+          <p class="doc-p">กรณีที่บริษัทอนุญาตให้ผู้สอนใช้เคสจริงเพื่อประกอบการสอน ผู้สอนต้องปรับแต่งข้อมูลให้ไม่สามารถระบุตัวตนได้อย่างแท้จริง โดยต้องลบ ปกปิด หรือเปลี่ยนแปลงข้อมูลที่สามารถระบุตัวตนได้ทั้งหมด และต้องได้รับอนุญาตจากบริษัทเป็นลายลักษณ์อักษรก่อนเสมอ</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 7. การห้ามบันทึกภาพ เสียง วิดีโอ หรือหน้าจอ</div>
+          <p class="doc-p">ผู้สอนห้ามบันทึกภาพ บันทึกเสียง บันทึกวิดีโอ ถ่ายภาพหน้าจอ ดาวน์โหลด คัดลอก หรือเก็บสำเนาเอกสาร ไฟล์ หรือข้อมูลใดๆ ที่เกี่ยวข้องกับการอบรม ลูกค้า ผู้เข้าร่วมอบรม หรือโครงการของบริษัท เว้นแต่เป็นการกระทำที่จำเป็นต่อการปฏิบัติงานและได้รับอนุญาตจากบริษัทก่อน</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 8. สิทธิในทรัพย์สินทางปัญญา เอกสาร และสื่อการสอน</div>
+          <p class="doc-p">บรรดาเอกสาร สื่อการสอน เนื้อหา Slide, Presentation, Prompt, Framework, Workflow, AI Use Case, Case Study, Template และงานสร้างสรรค์ใดๆ ที่บริษัทจัดทำหรือส่งมอบให้แก่ผู้สอน ถือเป็นกรรมสิทธิ์และทรัพย์สินทางปัญญาของบริษัทโดยสมบูรณ์ ผู้สอนไม่มีสิทธินำไปใช้ ทำซ้ำ ดัดแปลง หรือเผยแพร่โดยไม่ได้รับความยินยอมเป็นลายลักษณ์อักษรจากบริษัทก่อน</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 9. ข้อมูลส่วนบุคคลและข้อมูลลูกค้า</div>
+          <p class="doc-p">ผู้สอนตกลงว่าจะประมวลผล ใช้ และเก็บรักษาข้อมูลส่วนบุคคลของพนักงาน ลูกค้า ผู้เข้าอบรม เท่าที่จำเป็นตามวัตถุประสงค์ของงานเท่านั้น และต้องปฏิบัติตามกฎหมายว่าด้วยการคุ้มครองข้อมูลส่วนบุคคล (PDPA) และนโยบายของบริษัทอย่างเคร่งครัด</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 10. การห้ามติดต่อ ชักชวน หรือรับงานจากลูกค้าของบริษัทโดยตรง</div>
+          <p class="doc-p">ผู้สอนตกลงว่า ในระหว่างที่ปฏิบัติงานให้แก่บริษัท และภายในระยะเวลา <strong>1 ปี</strong> นับแต่วันที่งานอบรมสิ้นสุดลง ผู้สอนจะไม่ติดต่อ เสนอขายบริการ รับงาน เจรจาธุรกิจ ชักชวน หรือเข้าไปมีส่วนเกี่ยวข้องในการให้บริการแก่ลูกค้าของบริษัทโดยตรง ไม่ว่าด้วยตนเองหรือผ่านบุคคลอื่น เว้นแต่ได้รับความยินยอมเป็นลายลักษณ์อักษรจากบริษัทก่อน</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 11. การห้ามนำเคสจริงไปใช้เพื่อการประชาสัมพันธ์หรือสร้างภาพลักษณ์ส่วนตัว</div>
+          <p class="doc-p">ผู้สอนตกลงว่าจะไม่นำข้อมูลที่ได้รับจากการปฏิบัติงานไปใช้เพื่อการประชาสัมพันธ์ สร้าง Personal Branding ทำ Portfolio, Proposal, Content, Case Study ส่วนตัว หรือกล่าวอ้างต่อบุคคลภายนอกว่าเคยเข้าร่วม ทำงาน วางระบบ ให้คำปรึกษา หรือสอนให้แก่ลูกค้าของบริษัท ไม่ว่าทางตรงหรือทางอ้อม เว้นแต่ได้รับความยินยอมเป็นลายลักษณ์อักษรจากบริษัทก่อน</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 12. ข้อยกเว้นของข้อมูลความลับ</div>
+          <p class="doc-p no-indent">ข้อมูลต่อไปนี้ไม่ถือเป็นข้อมูลความลับภายใต้สัญญานี้</p>
+          <p class="doc-p no-indent" style="padding-left:2em;">1. ข้อมูลที่เป็นที่เปิดเผยต่อสาธารณะอยู่แล้วโดยมิใช่ผลจากการกระทำผิดของผู้สอน</p>
+          <p class="doc-p no-indent" style="padding-left:2em;">2. ข้อมูลที่ผู้สอนมีอยู่ก่อนโดยชอบด้วยกฎหมาย และสามารถพิสูจน์ได้เป็นลายลักษณ์อักษร</p>
+          <p class="doc-p no-indent" style="padding-left:2em;">3. ข้อมูลที่ผู้สอนได้รับจากบุคคลภายนอกโดยชอบด้วยกฎหมาย และบุคคลนั้นไม่มีหน้าที่รักษาความลับ</p>
+          <p class="doc-p no-indent" style="padding-left:2em;">4. ข้อมูลที่ต้องเปิดเผยตามคำสั่งศาล หรือบทบัญญัติของกฎหมาย ทั้งนี้ผู้สอนต้องแจ้งให้บริษัททราบเป็นลายลักษณ์อักษรโดยเร็วที่สุดก่อนการเปิดเผย</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 13. การคืนและทำลายข้อมูล</div>
+          <p class="doc-p">เมื่อบริษัทแจ้งเป็นลายลักษณ์อักษร หรือเมื่อสิ้นสุดการปฏิบัติงาน ผู้สอนต้องส่งคืน ลบ ทำลาย หรือทำให้ไม่สามารถเข้าถึงได้ซึ่งข้อมูลความลับ เอกสาร ไฟล์ สำเนา บันทึก ภาพถ่าย วิดีโอ ข้อมูลใน Cloud Drive อีเมล Chat Application หรืออุปกรณ์จัดเก็บข้อมูลใดๆ ที่เกี่ยวข้องกับบริษัทหรือลูกค้าของบริษัท</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 14. ระยะเวลาการรักษาความลับ</div>
+          <p class="doc-p">หน้าที่ในการรักษาความลับตามสัญญานี้ให้มีผลตั้งแต่วันที่ผู้สอนได้รับข้อมูลความลับเป็นครั้งแรก และให้มีผลต่อเนื่องไปอีกเป็นระยะเวลา
+            <span class="fill-blank short" id="preview-years">……</span>
+            นับแต่วันที่งานสิ้นสุดลง สำหรับข้อมูลที่มีลักษณะเป็นความลับทางการค้า ข้อมูลลูกค้า ข้อมูลโครงการ ข้อมูลส่วนบุคคล หน้าที่ในการรักษาความลับให้มีผลต่อไปโดยไม่มีกำหนดระยะเวลา ตราบเท่าที่ข้อมูลนั้นยังมิได้กลายเป็นข้อมูลสาธารณะโดยชอบด้วยกฎหมาย</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 15. ความรับผิดกรณีผิดสัญญา</div>
+          <p class="doc-p">หากผู้สอนฝ่าฝืนสัญญานี้ ผู้สอนตกลงรับผิดชดใช้ค่าเสียหายทั้งหมดที่เกิดขึ้นแก่บริษัท รวมถึงค่าเสียหายทางธุรกิจ ค่าเสียชื่อเสียง ค่าเสียโอกาสทางการค้า ค่าทนายความ และค่าดำเนินคดี</p>
+          <p class="doc-p">นอกจากนี้ ผู้สอนตกลงชำระค่าปรับให้แก่บริษัทเป็นเงินจำนวน
+            <span class="fill-blank short" id="preview-penalty">……………………</span>
+            บาท ต่อการฝ่าฝืนแต่ละครั้ง โดยการชำระค่าปรับดังกล่าวไม่ตัดสิทธิบริษัทในการเรียกค่าเสียหายเพิ่มเติม</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 16–17. สิทธิในการขอให้ระงับการกระทำ / การไม่ถือเป็นการโอนสิทธิ</div>
+          <p class="doc-p">หากมีเหตุอันควรเชื่อได้ว่าผู้สอนฝ่าฝืนสัญญานี้ บริษัทมีสิทธิเรียกร้องให้ผู้สอนหยุด ระงับ ลบ ถอน แก้ไข หรือยุติการกระทำดังกล่าวทันที และการเปิดเผยข้อมูลความลับให้แก่ผู้สอนไม่ถือเป็นการโอนสิทธิใดๆ ในข้อมูล ทรัพย์สินทางปัญญา หรือทรัพย์สินของบริษัทแต่อย่างใด</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 18. ความสัมพันธ์ของคู่สัญญา</div>
+          <p class="doc-p">สัญญานี้ไม่ก่อให้เกิดความสัมพันธ์ในลักษณะหุ้นส่วน ตัวแทน ลูกจ้าง นายจ้าง หรือผู้ร่วมทุนระหว่างคู่สัญญา ผู้สอนมีหน้าที่ปฏิบัติงานด้วยความสุจริต รอบคอบ และเป็นมืออาชีพ</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 19. การระงับข้อพิพาท</div>
+          <p class="doc-p">หากมีข้อพิพาทเกิดขึ้นจากสัญญานี้ คู่สัญญาตกลงเจรจาเพื่อหาทางระงับข้อพิพาทโดยสุจริตก่อน หากไม่สามารถตกลงกันได้ภายใน 10 วัน นับแต่วันที่มีหนังสือแจ้งข้อพิพาท คู่สัญญามีสิทธินำข้อพิพาทเข้าสู่กระบวนการทางศาลที่มีเขตอำนาจตามกฎหมาย โดยใช้กฎหมายไทยในการตีความและบังคับใช้สัญญานี้</p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">ข้อ 20. ข้อตกลงทั้งหมด</div>
+          <p class="doc-p">สัญญานี้ถือเป็นข้อตกลงทั้งหมดระหว่างคู่สัญญาเกี่ยวกับการรักษาความลับ การแก้ไขเพิ่มเติมสัญญานี้จะมีผลใช้บังคับได้ต่อเมื่อทำเป็นลายลักษณ์อักษรและลงนามโดยคู่สัญญาทั้งสองฝ่ายเท่านั้น สัญญาฉบับนี้ทำเป็นสองฉบับมีข้อความถูกต้องตรงกัน</p>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="sig-block">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-name-line"></div>
+            <div class="sig-label">(<span id="preview-company-rep-sig">………………………………</span>)</div>
+            <div class="sig-label" style="margin-top:4px;">บริษัท / ผู้เปิดเผยข้อมูล</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-name-line"></div>
+            <div class="sig-label">(<span id="preview-teacher-sig">………………………………</span>)</div>
+            <div class="sig-label" style="margin-top:4px;">ผู้รับข้อมูล / ผู้สอน</div>
+          </div>
+        </div>
+
+        <div class="witness-block">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-name-line"></div>
+            <div class="sig-label">(………………………………)</div>
+            <div class="sig-label" style="margin-top:4px;">พยาน</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-name-line"></div>
+            <div class="sig-label">(………………………………)</div>
+            <div class="sig-label" style="margin-top:4px;">พยาน</div>
+          </div>
+        </div>
+
+        <div class="attachment-block">
+          <div class="attachment-title">เอกสารที่แนบมาด้วย</div>
+          <div class="attachment-list">
+            <div class="attachment-item">
+              <div class="checkbox-box"></div>
+              <span>สำเนาบัตรประจำตัวประชาชน (พร้อมลงนามสำเนาถูกต้อง)</span>
+            </div>
+            <div class="attachment-item">
+              <div class="checkbox-box"></div>
+              <span>สำเนาหนังสือเดินทาง / Passport (กรณีไม่มีบัตรประชาชนไทย)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  function thDate(str) {
+    if (!str) return null;
+    const d = new Date(str);
+    const m = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+               'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    return `${d.getDate()} ${m[d.getMonth()]} พ.ศ. ${d.getFullYear() + 543}`;
+  }
+
+  function setField(id, value, fallback) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const empty = !value || value.trim() === '';
+    el.textContent = empty ? (fallback || '……………………………') : value;
+    el.className = el.className.replace(' empty', '');
+    if (empty && el.classList.contains('fill-blank')) el.classList.add('empty');
+  }
+
+  function toDirectUrl(url) {
+    if (!url) return null;
+    if (url.includes('drive.google.com/uc?')) return url;
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+    return url;
+  }
+
+  function updateLogo(url) {
+    const area = document.getElementById('docLogoArea');
+    const wrap = document.getElementById('logoSidebarWrap');
+    if (!url || !url.trim()) {
+      area.innerHTML = '<span class="doc-logo-text">Mentora Consulting Group Co., Ltd.</span>';
+      wrap.innerHTML = '<span class="logo-status">ยังไม่มีโลโก้</span>';
+      return;
+    }
+    const src = toDirectUrl(url.trim());
+    wrap.innerHTML = `<img src="${src}" alt="logo" style="max-height:48px;max-width:200px;object-fit:contain;border-radius:4px;background:rgba(255,255,255,0.08);padding:4px" onerror="document.getElementById('logoSidebarWrap').innerHTML='<span class=\\'logo-error\\'>โหลดรูปไม่ได้ — ตรวจสอบ link และสิทธิ์</span>'">`;
+    area.innerHTML = `<img src="${src}" alt="logo" style="max-height:56px;max-width:220px;object-fit:contain" onerror="this.parentNode.innerHTML='<span class=\\'doc-logo-text\\'>Mentora Consulting Group Co., Ltd.</span>'">`;
+  }
+
+  function sync() {
+    const v = id => document.getElementById(id).value;
+    setField('preview-date', v('contractDate') ? thDate(v('contractDate')) : null);
+    document.getElementById('preview-project').textContent = v('projectName') || 'ยังไม่ระบุ';
+    document.getElementById('preview-project-inline').textContent = v('projectName') || '……………………………';
+    setField('preview-company-rep', v('companyRep'));
+    setField('preview-company-rep-sig', v('companyRep'));
+    setField('preview-teacher', v('teacherName'));
+    setField('preview-teacher-sig', v('teacherName'));
+    setField('preview-address', v('address'));
+    setField('preview-id', v('idCard'));
+    setField('preview-phone', v('phone'));
+    const yr = v('secretYears');
+    setField('preview-years', yr ? (yr === 'ไม่มีกำหนด' ? 'ไม่มีกำหนด' : yr + ' ปี') : null, '……');
+    const pen = v('penalty');
+    setField('preview-penalty', pen ? pen.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : null, '……………………');
+    updateLogo(v('logoUrl'));
+  }
+
+  document.querySelectorAll('input,textarea,select').forEach(el => {
+    el.addEventListener('input', sync);
+    el.addEventListener('change', sync);
+  });
+
+  document.getElementById('contractDate').value = new Date().toISOString().split('T')[0];
+  sync();
+</script>
+</body>
+</html>
