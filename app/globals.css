@@ -307,4 +307,14 @@ body {
   body { background: white; }
 }
 
-@page { margin: 15mm; size: A4; }
+@page {
+  margin: 15mm;
+  size: A4;
+
+  @bottom-center {
+    content: "หน้าที่ " counter(page) " จาก " counter(pages);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 10px;
+    color: #888;
+  }
+}
