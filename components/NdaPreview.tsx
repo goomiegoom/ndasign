@@ -259,7 +259,7 @@ export default function NdaPreview({ data }: Props) {
             </p>
             <p className="doc-p">
               นอกจากนี้ ผู้สอนตกลงชำระค่าปรับให้แก่บริษัทเป็นเงินจำนวน{' '}
-              <FillBlank value={formatPenalty(data.penalty)} fallback="……………………" size="short" />
+              <FillBlank value={formatPenalty(data.penalty)} fallback="เท่ามูลค่าสัญญา" size="short" />
               {' '}บาท ต่อการฝ่าฝืนแต่ละครั้ง โดยการชำระค่าปรับดังกล่าวไม่ตัดสิทธิบริษัทในการเรียกค่าเสียหายเพิ่มเติม
             </p>
           </div>

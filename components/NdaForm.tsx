@@ -134,7 +134,7 @@ export default function NdaForm() {
             </div>
             <div className="field">
               <label>ค่าปรับต่อการฝ่าฝืนแต่ละครั้ง (บาท)</label>
-              <input type="text" value={data.penalty} onChange={set('penalty')} placeholder="เช่น 50,000" />
+              <input type="text" value={data.penalty} onChange={set('penalty')} placeholder="เท่ามูลค่าสัญญา" />
               <div className="hint">ข้อ 15</div>
             </div>
           </div>
