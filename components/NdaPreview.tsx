@@ -1,12 +1,12 @@
 'use client';
 
 import { NdaFormData } from '@/types/nda';
-import { toDirectUrl } from '@/utils/gdrive';
 import { thDate } from '@/utils/thDate';
 import FillBlank from './FillBlank';
 
 interface Props {
   data: NdaFormData;
+  logoDataUrl: string;
 }
 
 function formatPenalty(val: string): string {
@@ -22,8 +22,7 @@ function formatYears(val: string): string {
   return `${val} ปี`;
 }
 
-export default function NdaPreview({ data }: Props) {
-  const logoSrc = data.logoUrl ? toDirectUrl(data.logoUrl.trim()) : '';
+export default function NdaPreview({ data, logoDataUrl }: Props) {
   const dateStr = data.contractDate ? thDate(data.contractDate) : '';
 
   return (
@@ -39,14 +38,9 @@ export default function NdaPreview({ data }: Props) {
           {/* Header */}
           <div className="doc-header">
             <div className="doc-logo-area">
-              {logoSrc ? (
+              {logoDataUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={logoSrc}
-                  alt="logo"
-                  style={{ maxHeight: 56, maxWidth: 220, objectFit: 'contain' }}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
+                <img src={logoDataUrl} alt="logo" style={{ maxHeight: 56, maxWidth: 220, objectFit: 'contain' }} />
               ) : (
                 <span className="doc-logo-text">Mentora Consulting Group Co., Ltd.</span>
               )}
@@ -327,14 +321,14 @@ export default function NdaPreview({ data }: Props) {
             <div className="sig-box">
               <div className="sig-line" />
               <div className="sig-name-line" />
-              <div className="sig-label">(………………………………)</div>
-              <div className="sig-label" style={{ marginTop: 4 }}>พยาน</div>
+              <div className="sig-label">({data.witness1 || '………………………………'})</div>
+              <div className="sig-label" style={{ marginTop: 4 }}>พยานที่ 1</div>
             </div>
             <div className="sig-box">
               <div className="sig-line" />
               <div className="sig-name-line" />
-              <div className="sig-label">(………………………………)</div>
-              <div className="sig-label" style={{ marginTop: 4 }}>พยาน</div>
+              <div className="sig-label">({data.witness2 || '………………………………'})</div>
+              <div className="sig-label" style={{ marginTop: 4 }}>พยานที่ 2</div>
             </div>
           </div>
 
