@@ -1,5 +1,4 @@
 export interface NdaFormData {
-  logoUrl: string;
   contractDate: string;
   projectName: string;
   companyRep: string;
@@ -9,4 +8,6 @@ export interface NdaFormData {
   phone: string;
   secretYears: string;
   penalty: string;
+  witness1: string;
+  witness2: string;
 }

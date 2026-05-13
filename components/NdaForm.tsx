@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { NdaFormData } from '@/types/nda';
-import { toDirectUrl } from '@/utils/gdrive';
 import NdaPreview from './NdaPreview';
 
 const today = new Date().toISOString().split('T')[0];
 
 const initialData: NdaFormData = {
-  logoUrl: '',
   contractDate: today,
   projectName: '',
   companyRep: '',
@@ -18,20 +16,33 @@ const initialData: NdaFormData = {
   phone: '',
   secretYears: '',
   penalty: '',
+  witness1: '',
+  witness2: '',
 };
 
 export default function NdaForm() {
   const [data, setData] = useState<NdaFormData>(initialData);
-  const [logoError, setLogoError] = useState(false);
+  const [logoDataUrl, setLogoDataUrl] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function set(field: keyof NdaFormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setData((prev) => ({ ...prev, [field]: e.target.value }));
-      if (field === 'logoUrl') setLogoError(false);
     };
   }
 
-  const logoSrc = data.logoUrl ? toDirectUrl(data.logoUrl.trim()) : '';
+  function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setLogoDataUrl(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  function clearLogo() {
+    setLogoDataUrl('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
 
   return (
     <div className="app">
@@ -47,26 +58,31 @@ export default function NdaForm() {
           <div className="form-section">
             <div className="form-section-label">โลโก้บริษัท</div>
             <div className="field">
-              <label>Google Drive link ของโลโก้</label>
+              <label>อัปโหลดรูปโลโก้</label>
               <input
-                type="text"
-                value={data.logoUrl}
-                onChange={set('logoUrl')}
-                placeholder="https://drive.google.com/file/d/.../view"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}
               />
-              <div className="hint">share &ldquo;Anyone with link&rdquo; แล้ววาง link ได้เลย — แปลงให้อัตโนมัติ</div>
             </div>
             <div className="logo-preview-sidebar">
-              {logoSrc && !logoError ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={logoSrc}
-                  alt="logo preview"
-                  style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', borderRadius: 4, background: 'rgba(255,255,255,0.08)', padding: 4 }}
-                  onError={() => setLogoError(true)}
-                />
-              ) : logoError ? (
-                <span className="logo-error">โหลดรูปไม่ได้ — ตรวจสอบ link และสิทธิ์</span>
+              {logoDataUrl ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={logoDataUrl}
+                    alt="logo preview"
+                    style={{ maxHeight: 40, maxWidth: 160, objectFit: 'contain', borderRadius: 4, background: 'rgba(255,255,255,0.08)', padding: 4 }}
+                  />
+                  <button
+                    onClick={clearLogo}
+                    style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  >
+                    ลบ
+                  </button>
+                </div>
               ) : (
                 <span className="logo-status">ยังไม่มีโลโก้</span>
               )}
@@ -139,6 +155,19 @@ export default function NdaForm() {
             </div>
           </div>
 
+          {/* พยาน */}
+          <div className="form-section">
+            <div className="form-section-label">พยาน</div>
+            <div className="field">
+              <label>ชื่อ-นามสกุล พยานที่ 1</label>
+              <input type="text" value={data.witness1} onChange={set('witness1')} placeholder="ชื่อ-นามสกุล" />
+            </div>
+            <div className="field">
+              <label>ชื่อ-นามสกุล พยานที่ 2</label>
+              <input type="text" value={data.witness2} onChange={set('witness2')} placeholder="ชื่อ-นามสกุล" />
+            </div>
+          </div>
+
         </div>
 
         <button className="print-btn" onClick={() => window.print()}>
@@ -151,7 +180,7 @@ export default function NdaForm() {
         </button>
       </aside>
 
-      <NdaPreview data={data} />
+      <NdaPreview data={data} logoDataUrl={logoDataUrl} />
     </div>
   );
 }
