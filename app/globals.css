@@ -305,6 +305,7 @@ body {
   .nda-doc { box-shadow: none; border-radius: 0; max-width: 100%; }
   .doc-body { padding: 20mm 25mm; font-size: 14px; }
   body { background: white; }
+  .signing-section { break-before: page; }
 }
 
 @page {

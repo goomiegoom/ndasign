@@ -298,19 +298,18 @@ export default function NdaPreview({ data, logoDataUrl }: Props) {
             </p>
           </div>
 
-          <div className="section-divider" />
+          {/* Signing page */}
+          <div className="signing-section">
 
           {/* Signature block */}
           <div className="sig-block">
             <div className="sig-box">
               <div className="sig-line" />
-              <div className="sig-name-line" />
               <div className="sig-label">({data.companyRep || '………………………………'})</div>
               <div className="sig-label" style={{ marginTop: 4 }}>บริษัท / ผู้เปิดเผยข้อมูล</div>
             </div>
             <div className="sig-box">
               <div className="sig-line" />
-              <div className="sig-name-line" />
               <div className="sig-label">({data.teacherName || '………………………………'})</div>
               <div className="sig-label" style={{ marginTop: 4 }}>ผู้รับข้อมูล / ผู้สอน</div>
             </div>
@@ -320,13 +319,11 @@ export default function NdaPreview({ data, logoDataUrl }: Props) {
           <div className="witness-block">
             <div className="sig-box">
               <div className="sig-line" />
-              <div className="sig-name-line" />
               <div className="sig-label">({data.witness1 || '………………………………'})</div>
               <div className="sig-label" style={{ marginTop: 4 }}>พยานที่ 1</div>
             </div>
             <div className="sig-box">
               <div className="sig-line" />
-              <div className="sig-name-line" />
               <div className="sig-label">({data.witness2 || '………………………………'})</div>
               <div className="sig-label" style={{ marginTop: 4 }}>พยานที่ 2</div>
             </div>
@@ -346,6 +343,8 @@ export default function NdaPreview({ data, logoDataUrl }: Props) {
               </div>
             </div>
           </div>
+
+          </div>{/* end signing-section */}
 
         </div>
       </div>
